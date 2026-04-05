@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ordena Fish in the Sea</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+  <style>
+    :root, [data-theme="light"] {
+      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+      --text-2xl: clamp(2rem, 1.2rem + 2.5vw, 3.5rem);
+      --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem; --space-12: 3rem;
+      --color-bg: #dff4fb;
+      --color-surface: rgba(250, 253, 255, 0.86);
+      --color-surface-2: rgba(233, 247, 252, 0.95);
+      --color-border: rgba(32, 88, 112, 0.18);
+      --color-text: #153445;
+      --color-muted: #4e7280;
+      --color-primary: #0e7885;
+      --color-primary-hover: #0a5a64;
+      --color-accent: #f2a93b;
+      --color-success: #2f8f50;
+      --color-error: #ba4762;
+      --radius-sm: 0.5rem; --radius-md: 0.9rem; --radius-lg: 1.35rem; --radius-full: 999px;
+      --shadow-sm: 0 6px 18px rgba(16, 58, 78, .12);
+      --shadow-md: 0 18px 42px rgba(16, 58, 78, .16);
+      --font-body: 'DM Sans', system-ui, sans-serif;
+      --font-display: 'Fraunces', Georgia, serif;
+    }
+    [data-theme="dark"] {
+      --color-bg: #0d2230;
+      --color-surface: rgba(17, 34, 48, 0.88);
+      --color-surface-2: rgba(22, 44, 60, 0.95);
+      --color-border: rgba(172, 225, 244, 0.18);
+      --color-text: #ebf8ff;
+      --color-muted: #a7c6d3;
+      --color-primary: #59c1cf;
+      --color-primary-hover: #87d6df;
+      --color-accent: #ffc96b;
+      --color-success: #77d59b;
+      --color-error: #ff8ba4;
+      --shadow-sm: 0 6px 18px rgba(0, 0, 0, .28);
+      --shadow-md: 0 18px 42px rgba(0, 0, 0, .38);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      color: var(--color-text);
+      background: var(--color-bg);
+      overflow-x: hidden;
+    }
+    .bg-art {
+      position: fixed; inset: 0; z-index: -2;
+      background-image: linear-gradient(rgba(9, 58, 82, .12), rgba(8, 46, 67, .24)), url('https://user-gen-media-assets.s3.amazonaws.com/seedream_images/83958ad8-14f5-4189-ae55-b9bc57902573.png');
+      background-size: cover;
+      background-position: center;
+    }
+    .bg-wash {
+      position: fixed; inset: 0; z-index: -1;
+      background: radial-gradient(circle at top, rgba(255,255,255,.16), transparent 35%), linear-gradient(180deg, rgba(223,244,251,.24), rgba(13,34,48,.08));
+      pointer-events: none;
+    }
+    button { font: inherit; }
+    .shell {
+      width: min(980px, calc(100% - 1rem));
+      margin: 0 auto;
+      padding: 1rem 0 2.5rem;
+    }
+    header {
+      display: flex; justify-content: space-between; align-items: center; gap: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+    .brand { display: inline-flex; align-items: center; gap: var(--space-3); font-weight: 700; color: white; text-shadow: 0 2px 12px rgba(9,35,46,.35); }
+    .logo {
+      width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center;
+      background: linear-gradient(145deg, var(--color-primary), color-mix(in srgb, var(--color-primary) 50%, white));
+      color: white; box-shadow: var(--shadow-sm);
+    }
+    .theme-toggle {
+      min-width: 44px; min-height: 44px; border-radius: var(--radius-full); border: 1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.16); color: white; cursor: pointer; backdrop-filter: blur(10px);
+    }
+    .hero, .panel {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(14px);
+    }
+    .hero { padding: clamp(1.2rem, 2vw, 2rem); margin-bottom: var(--space-6); }
+    h1 {
+      margin: 0 0 var(--space-4);
+      font-family: var(--font-display);
+      font-size: var(--text-2xl);
+      line-height: 1.02;
+      max-width: 12ch;
+    }
+    .sub { margin: 0; color: var(--color-muted); max-width: 60ch; }
+    .stats { margin-top: var(--space-5); display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: var(--space-3); }
+    .stat { background: var(--color-surface-2); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-4); }
+    .label { display: block; font-size: var(--text-xs); color: var(--color-muted); text-transform: uppercase; letter-spacing: .08em; }
+    .value { display: block; font-size: var(--text-lg); font-weight: 700; margin-top: .15rem; }
+    .panel { padding: var(--space-6); }
+    .tray, .answer {
+      display: flex; flex-wrap: wrap; gap: var(--space-3);
+      min-height: 78px; padding: var(--space-4);
+      border-radius: var(--radius-md);
+      border: 2px dashed color-mix(in srgb, var(--color-primary) 32%, var(--color-border));
+      background: rgba(255,255,255,.22);
+    }
+    .answer { margin-top: var(--space-4); }
+    .word {
+      min-height: 46px; padding: .78rem 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-full);
+      background: color-mix(in srgb, white 84%, var(--color-surface-2)); color: var(--color-text); cursor: pointer; font-weight: 700;
+      box-shadow: var(--shadow-sm);
+    }
+    .word:hover, .word:focus-visible { border-color: var(--color-primary); outline: none; transform: translateY(-2px); }
+    .controls { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-5); }
+    .btn { min-height: 46px; border: 0; border-radius: var(--radius-full); padding: 0 1rem; font-weight: 700; cursor: pointer; }
+    .btn-primary { background: var(--color-primary); color: white; }
+    .btn-primary:hover { background: var(--color-primary-hover); }
+    .btn-secondary { background: rgba(255,255,255,.35); border: 1px solid var(--color-border); color: var(--color-text); }
+    .message { margin-top: var(--space-4); padding: var(--space-4); border-radius: var(--radius-md); background: var(--color-surface-2); border: 1px solid var(--color-border); font-weight: 500; }
+    .message.ok { color: var(--color-success); border-color: color-mix(in srgb, var(--color-success) 35%, var(--color-border)); }
+    .message.error { color: var(--color-error); border-color: color-mix(in srgb, var(--color-error) 35%, var(--color-border)); }
+    .note { margin-top: var(--space-3); color: var(--color-muted); }
+    .fish-strip {
+      margin-top: var(--space-5); display: flex; gap: var(--space-3); flex-wrap: wrap;
+    }
+    .chip {
+      padding: .55rem .9rem; border-radius: var(--radius-full); background: rgba(255,255,255,.3); border: 1px solid var(--color-border);
+      color: var(--color-muted); font-size: var(--text-sm);
+    }
+    @media (max-width: 760px) {
+      .stats { grid-template-columns: 1fr; }
+      .panel { padding: var(--space-4); }
+      .shell { width: min(100%, calc(100% - .8rem)); }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-art"></div>
+  <div class="bg-wash"></div>
+
+  <div class="shell">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12s3-4 8-4 8 4 8 4-3 4-8 4-8-4-8-4Z"></path>
+            <circle cx="10" cy="11" r="1"></circle>
+            <path d="M19 12l2-2v4l-2-2Z"></path>
+          </svg>
+        </div>
+        <span>Ordena la expresión</span>
+      </div>
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Cambiar tema">🌙</button>
+    </header>
+
+    <main>
+      <section class="hero">
+        <h1>Ordena la frase del mar</h1>
+        <p class="sub">Pulsa las palabras para colocarlas en el orden correcto. El fondo incluye una ilustración relacionada con la expresión “THERE ARE PLENTY MORE FISH IN THE SEA”.</p>
+        <div class="stats">
+          <div class="stat"><span class="label">Palabras</span><span class="value" id="totalWords">0</span></div>
+          <div class="stat"><span class="label">Intentos</span><span class="value" id="attempts">0</span></div>
+          <div class="stat"><span class="label">Aciertos</span><span class="value" id="wins">0</span></div>
+        </div>
+        <div class="fish-strip" aria-hidden="true">
+          <span class="chip">Ocean</span>
+          <span class="chip">Fish</span>
+          <span class="chip">English idiom</span>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Tu reto</h2>
+        <p class="note">Expresión objetivo: 8 bloques en inglés.</p>
+
+        <h3>Palabras mezcladas</h3>
+        <div class="tray" id="wordBank" aria-live="polite"></div>
+
+        <h3>Tu respuesta</h3>
+        <div class="answer" id="answerArea" aria-live="polite"></div>
+
+        <div class="controls">
+          <button class="btn btn-primary" id="checkBtn" type="button">Comprobar</button>
+          <button class="btn btn-secondary" id="resetBtn" type="button">Reiniciar</button>
+          <button class="btn btn-secondary" id="showBtn" type="button">Mostrar solución</button>
+        </div>
+
+        <div id="message" class="message" role="status">Empieza pulsando una palabra.</div>
+        <p class="note">Solución: THERE ARE PLENTY MORE FISH IN THE SEA.</p>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const solution = ['THERE', 'ARE', 'PLENTY', 'MORE', 'FISH', 'IN', 'THE', 'SEA'];
+    const state = { bank: [], answer: [], attempts: 0, wins: 0 };
+
+    const wordBank = document.getElementById('wordBank');
+    const answerArea = document.getElementById('answerArea');
+    const message = document.getElementById('message');
+    const attemptsEl = document.getElementById('attempts');
+    const winsEl = document.getElementById('wins');
+    const totalWordsEl = document.getElementById('totalWords');
+    const toggle = document.querySelector('[data-theme-toggle]');
+
+    function shuffle(arr) {
+      const clone = [...arr];
+      for (let i = clone.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [clone[i], clone[j]] = [clone[j], clone[i]];
+      }
+      return clone;
+    }
+
+    function setMessage(text, type = '') {
+      message.textContent = text;
+      message.className = 'message' + (type ? ' ' + type : '');
+    }
+
+    function makeWord(word, origin) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'word';
+      btn.textContent = word;
+      btn.addEventListener('click', () => {
+        if (origin === 'bank') {
+          const index = state.bank.indexOf(word);
+          if (index > -1) {
+            state.bank.splice(index, 1);
+            state.answer.push(word);
+          }
+        } else {
+          const index = state.answer.indexOf(word);
+          if (index > -1) {
+            state.answer.splice(index, 1);
+            state.bank.push(word);
+          }
+        }
+        render();
+      });
+      return btn;
+    }
+
+    function render() {
+      wordBank.innerHTML = '';
+      answerArea.innerHTML = '';
+      state.bank.forEach(word => wordBank.appendChild(makeWord(word, 'bank')));
+      state.answer.forEach(word => answerArea.appendChild(makeWord(word, 'answer')));
+      attemptsEl.textContent = state.attempts;
+      winsEl.textContent = state.wins;
+      totalWordsEl.textContent = solution.length;
+    }
+
+    function resetGame(customMessage = 'Juego reiniciado. Vuelve a intentarlo.') {
+      state.bank = shuffle(solution);
+      if (state.bank.join(' ') === solution.join(' ')) state.bank = shuffle(solution);
+      state.answer = [];
+      render();
+      setMessage(customMessage);
+    }
+
+    document.getElementById('checkBtn').addEventListener('click', () => {
+      state.attempts += 1;
+      if (state.answer.length !== solution.length) {
+        render();
+        setMessage('Todavía faltan palabras por colocar.', 'error');
+        return;
+      }
+      const correct = state.answer.every((word, i) => word === solution[i]);
+      render();
+      if (correct) {
+        state.wins += 1;
+        winsEl.textContent = state.wins;
+        setMessage('¡Muy bien! Has ordenado la expresión correctamente.', 'ok');
+      } else {
+        setMessage('El orden no es correcto. Prueba otra vez.', 'error');
+      }
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => resetGame());
+
+    document.getElementById('showBtn').addEventListener('click', () => {
+      state.answer = [...solution];
+      state.bank = [];
+      render();
+      setMessage('Solución mostrada: THERE ARE PLENTY MORE FISH IN THE SEA.', 'ok');
+    });
+
+    (function initTheme() {
+      let theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+      toggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+      toggle.setAttribute('aria-label', theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro');
+      toggle.addEventListener('click', () => {
+        theme = theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
+        toggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+        toggle.setAttribute('aria-label', theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro');
+      });
+    })();
+
+    resetGame('Empieza pulsando una palabra.');
+  </script>
+</body>
+</html>
